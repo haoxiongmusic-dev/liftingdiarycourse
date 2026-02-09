@@ -11,6 +11,7 @@ Current docs:
 - `docs/data-fetching.md` — Data fetching rules and database query conventions
 - `docs/data-mutations.md` — Data mutation rules, Server Actions, and Zod validation
 - `docs/auth.md` — Authentication standards and Clerk usage
+- `docs/routing.md` — App route structure, protection, and navigation rules
 
 ## Commands
 

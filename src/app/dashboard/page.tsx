@@ -1,4 +1,5 @@
 import { parse, isValid, format } from "date-fns";
+import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import {
   Card,
@@ -48,7 +49,12 @@ export default async function DashboardPage({
       ) : (
         <div className="flex flex-col gap-4">
           {workouts.map((workout) => (
-            <Card key={workout.id}>
+            <Link
+              key={workout.id}
+              href={`/dashboard/workout/${workout.id}`}
+              className="block transition-opacity hover:opacity-80"
+            >
+            <Card>
               <CardHeader>
                 <CardTitle>
                   {workout.name || "Workout"}
@@ -89,6 +95,7 @@ export default async function DashboardPage({
                 </CardContent>
               )}
             </Card>
+            </Link>
           ))}
         </div>
       )}
