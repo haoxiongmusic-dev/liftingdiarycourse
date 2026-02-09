@@ -1,15 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import { format } from "date-fns";
-import { CalendarIcon, Dumbbell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { parse, isValid } from "date-fns";
+import { Dumbbell } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,70 +7,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { getCurrentUserId } from "@/lib/auth";
+import { getWorkoutsByDate } from "@/data/workouts";
+import { DatePicker } from "./date-picker";
 
-const MOCK_WORKOUTS = [
-  {
-    id: "1",
-    name: "Bench Press",
-    sets: [
-      { reps: 8, weight: 135 },
-      { reps: 8, weight: 155 },
-      { reps: 6, weight: 175 },
-    ],
-  },
-  {
-    id: "2",
-    name: "Barbell Row",
-    sets: [
-      { reps: 10, weight: 115 },
-      { reps: 10, weight: 135 },
-      { reps: 8, weight: 135 },
-    ],
-  },
-  {
-    id: "3",
-    name: "Overhead Press",
-    sets: [
-      { reps: 10, weight: 75 },
-      { reps: 8, weight: 85 },
-      { reps: 6, weight: 95 },
-    ],
-  },
-];
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date: dateParam } = await searchParams;
 
-export default function DashboardPage() {
-  const [date, setDate] = useState<Date>(new Date());
+  let date = new Date();
+  if (dateParam) {
+    const parsed = parse(dateParam, "yyyy-MM-dd", new Date());
+    if (isValid(parsed)) {
+      date = parsed;
+    }
+  }
+
+  const userId = await getCurrentUserId();
+  const workouts = await getWorkoutsByDate(userId, date);
+
+  const exercises = workouts.flatMap((workout) =>
+    workout.workoutExercises.map((we) => ({
+      id: we.id,
+      name: we.exercise.name,
+      sets: we.sets,
+    }))
+  );
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-2xl font-bold">Workouts</h2>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-[200px] justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon />
-              {format(date, "do MMM yyyy")}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(day) => day && setDate(day)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+        <DatePicker value={date} />
       </div>
 
-      {MOCK_WORKOUTS.length === 0 ? (
+      {exercises.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Dumbbell className="mb-4 size-10 text-muted-foreground" />
@@ -91,12 +55,13 @@ export default function DashboardPage() {
         </Card>
       ) : (
         <div className="flex flex-col gap-4">
-          {MOCK_WORKOUTS.map((workout) => (
-            <Card key={workout.id}>
+          {exercises.map((exercise) => (
+            <Card key={exercise.id}>
               <CardHeader>
-                <CardTitle>{workout.name}</CardTitle>
+                <CardTitle>{exercise.name}</CardTitle>
                 <CardDescription>
-                  {workout.sets.length} {workout.sets.length === 1 ? "set" : "sets"}
+                  {exercise.sets.length}{" "}
+                  {exercise.sets.length === 1 ? "set" : "sets"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -105,12 +70,12 @@ export default function DashboardPage() {
                   <span>Weight (lbs)</span>
                   <span>Reps</span>
                 </div>
-                {workout.sets.map((set, i) => (
+                {exercise.sets.map((set) => (
                   <div
-                    key={i}
+                    key={set.id}
                     className="grid grid-cols-3 gap-2 border-t py-2 text-sm"
                   >
-                    <span>{i + 1}</span>
+                    <span>{set.setNumber}</span>
                     <span>{set.weight}</span>
                     <span>{set.reps}</span>
                   </div>
