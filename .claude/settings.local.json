@@ -4,7 +4,8 @@
       "Bash(npm install:*)",
       "mcp__Neon__describe_table_schema",
       "mcp__Neon__run_sql",
-      "mcp__Neon__run_sql_transaction"
+      "mcp__Neon__run_sql_transaction",
+      "Bash(npx shadcn@latest add button calendar popover card --yes)"
     ]
   }
 }

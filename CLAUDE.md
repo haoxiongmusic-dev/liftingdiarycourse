@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Docs-First Rule
+
+**Before generating or modifying any code, always read and refer to the relevant documentation files in the `/docs` directory.** These docs contain project-specific conventions, patterns, and requirements that must be followed. If a docs file covers the area you are working on, treat it as the source of truth.
+
+Current docs:
+- `docs/ui.md` — UI conventions and component guidelines
+
 ## Commands
 
 - `npm run dev` — Start dev server (http://localhost:3000) with hot reload
