@@ -9,7 +9,14 @@
       "Bash(xargs:*)",
       "mcp__Neon__list_projects",
       "mcp__Neon__get_database_tables",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(git push:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(git add:*)"
     ]
   }
 }
