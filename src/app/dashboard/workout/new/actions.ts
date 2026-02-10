@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/auth";
 import { createWorkout } from "@/data/workouts";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const createWorkoutSchema = z.object({
   name: z.string().trim().max(256).optional(),
@@ -17,10 +17,12 @@ export async function createWorkoutAction(params: {
   const parsed = createWorkoutSchema.parse(params);
   const userId = await getCurrentUserId();
 
-  await createWorkout(userId, {
+  const [workout] = await createWorkout(userId, {
     name: parsed.name || undefined,
     startedAt: parsed.startedAt,
   });
 
-  redirect("/dashboard");
+  revalidatePath("/dashboard");
+
+  return { workoutId: workout.id };
 }
