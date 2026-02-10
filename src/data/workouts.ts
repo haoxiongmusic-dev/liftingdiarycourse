@@ -39,11 +39,14 @@ export async function createWorkout(
   userId: string,
   data: { name?: string; startedAt: Date }
 ) {
-  return db.insert(workouts).values({
-    userId,
-    name: data.name || null,
-    startedAt: data.startedAt,
-  });
+  return db
+    .insert(workouts)
+    .values({
+      userId,
+      name: data.name || null,
+      startedAt: data.startedAt,
+    })
+    .returning({ id: workouts.id });
 }
 
 export async function getWorkoutsByDate(userId: string, date: Date) {
